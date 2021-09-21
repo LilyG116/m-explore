@@ -1,0 +1,4 @@
+<launch>  
+  <node pkg="lily_explore" type="Lily_Assigner" respawn="false" name="explore" output="screen">
+  </node>
+</launch>
