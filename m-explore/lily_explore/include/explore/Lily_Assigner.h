@@ -5,23 +5,41 @@
 #include <mutex>
 #include <string>
 #include <vector>
-
-#include <actionlib/client/simple_action_client.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <move_base_msgs/MoveBaseAction.h>
 #include <ros/ros.h>
-#include <visualization_msgs/MarkerArray.h>
 
 #include <explore/costmap_client.h>
 #include <explore/frontier_search.h>
 #include <explore/explore.h>
 
 #include <lily_explore/my_msg.h>
+#include <lily_explore/robotlist.h>
 struct Point {
     float x;
     float y;
 };
+struct kPoint {
+    double x, y;     // coordinates
+    int cluster;     // no default cluster
+    double minDist, maxDist;  // default infinite dist to nearest cluster
 
+    kPoint() : 
+        x(0.0), 
+        y(0.0),
+        cluster(-1),
+        maxDist(0),
+        minDist(__DBL_MAX__) {}
+        
+    kPoint(double x, double y) : 
+        x(x), 
+        y(y),
+        cluster(-1),
+        maxDist(0),
+        minDist(__DBL_MAX__) {}
+
+    double distance(kPoint p) {
+        return (p.x - x) * (p.x - x) + (p.y - y) * (p.y - y);
+    }
+};
 namespace explore
 {
 class assigner
@@ -32,7 +50,6 @@ private:
 public:
 
 
-double dist(geometry_msgs::Point& frontier, geometry_msgs::Point& pos);
 
 //		
 void add_ftr_list(std::vector<geometry_msgs::Point> new_ftrs, int size);
@@ -46,9 +63,9 @@ void clbk_r3(const lily_explore::my_msg::ConstPtr& msg_r3);
 bool unknown(double x, double y);
 
 //Call backs for map updates, update flags to true and save updated maps
-void clbk_map1(const nav_msgs::OccupancyGrid::ConstPtr& map_msg);
-void clbk_map2(const nav_msgs::OccupancyGrid::ConstPtr& map_msg);
-void clbk_map3(const nav_msgs::OccupancyGrid::ConstPtr& map_msg);
+static void clbk_map1(const nav_msgs::OccupancyGrid::ConstPtr& map_msg);
+static void clbk_map2(const nav_msgs::OccupancyGrid::ConstPtr& map_msg);
+static void clbk_map3(const nav_msgs::OccupancyGrid::ConstPtr& map_msg);
 
 //Initialize nodehandles, subscribers to frontierlists, and map topics, and publishing to goal topics, intialize flags to false 
 void initialize();

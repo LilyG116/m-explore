@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   my_msg.msg
+  robotlist.msg
 #   Message2.msg
 )
 

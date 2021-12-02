@@ -1,0 +1,32 @@
+<launch>
+  <include file="$(find turtlebot3_gazebo)/launch/multi_turtlebot3_world.launch"/>
+  
+  
+  <group ns="robot_1">
+	<!--include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch"-->
+		<!--arg name="multi_robot_name" value="robot_1"/-->
+	<!--/include-->  
+	<include file="$(find rrt_exploration)/launch/move_baseSafe.launch">
+		<arg name="namespace" value="robot_1"/>
+	</include> 
+  </group>
+
+  <group ns="robot_2">
+	<!--include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch"-->
+		<!--arg name="multi_robot_name" value="robot_2"/-->
+	<!--/include-->          
+	<include file="$(find rrt_exploration)/launch/move_baseSafe.launch">
+		<arg name="namespace" value="robot_2"/>
+	</include> 
+  </group>
+
+
+  <!-- Map megring (know inital position case)-->
+   <include file="$(find turtlebot3_gazebo)/launch/multi_map_merge_2.launch"/>
+
+   <!-- run RViz node (visualization) -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find turtlebot3_gazebo)/rviz/multi_turtlebot3_slam_change.rviz">
+  </node>
+
+</launch>
+

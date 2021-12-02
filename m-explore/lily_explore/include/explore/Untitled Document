@@ -1,0 +1,34 @@
+void distancetracking()
+{
+  tf::TransformListener listener;
+  tf::StampedTransform pos;
+   for(int i =1; i<=robotnum; i++){
+      std::string start, end, num, topic;
+      start = "/robot_";
+      end = "/base_link";
+      num = std::to_string(i);
+      topic = start+ num + end;
+      std::cout<< "Sub:"<< topic;
+      listener.waitForTransform("/map", topic, ros::Time::now(), ros::Duration(2.0));
+      listener.lookupTransform("/map", topic, ros::Time(0), pos);
+      positions[i].push_back(pos);
+  }
+  ROS_INFO("got it");
+  if(positions.size()>0)
+  {
+    for (int i =0; i<robotnum; i++){ 
+      distancetravelled[i] = dist3(positions.at(i).at(positions[i].size() -1), positions.at(i).at(positions[i].size()))+ distancetravelled[i];
+      ROS_INFO("Robot_%d total distance travelled %f", i+1, distancetravelled[i]);
+    }
+  }
+
+}
+double dist3(tf::StampedTransform pos1, tf::StampedTransform pos)
+{
+    double dx = pos1.getOrigin().x() - pos.getOrigin().x();
+    double dy = pos1.getOrigin().y() - pos.getOrigin().y();
+    double d = sqrt(dx * dx + dy * dy);
+    return d;
+}
+
+
